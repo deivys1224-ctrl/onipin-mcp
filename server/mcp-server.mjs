@@ -3,7 +3,7 @@
  * Cada tool reutiliza la API pública /v1 (sin duplicar lógica ni credenciales):
  * las conversaciones creadas aquí aparecen en CHATS como "Agente de IA".
  *
- * Tool names use domain.action (Smithery / MCP best practice).
+ * Tool names use underscores only (Claude / ChatGPT / Cursor compatible).
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -83,12 +83,12 @@ const WRITE_EXTERNAL = {
 
 const INSTRUCTIONS = `OniPin MCP connects AI agents to businesses via public pins (onp_…).
 Typical flow:
-1) discover.from_url or business.lookup to identify the business
-2) protocol.handshake (optional) with intent
-3) catalog.list before buying; chat.send to converse (keep conversationId)
-4) booking.create or order.create for requests (pending business approval)
-5) chat.read to poll owner replies when mode is human
-Use domain.action tool names (business.lookup, chat.send, …).`;
+1) discover_from_url or business_lookup to identify the business
+2) protocol_handshake (optional) with intent
+3) catalog_list before buying; chat_send to converse (keep conversationId)
+4) booking_create or order_create for requests (pending business approval)
+5) chat_read to poll owner replies when mode is human
+Tool names use underscores only (Claude/ChatGPT/Cursor compatible): business_lookup, chat_send, …`;
 
 /** Compact OniPin mark (same as /icon.svg) for MCP clients that read serverInfo.icons */
 const ICON_DATA_URI =
@@ -98,7 +98,7 @@ export function createOniPinMcpServer() {
   const server = new McpServer(
     {
       name: "onipin",
-      version: "0.2.1",
+      version: "0.2.2",
       title: "OniPin",
       websiteUrl: "https://onnivers.store",
       icons: [
@@ -120,7 +120,7 @@ export function createOniPinMcpServer() {
   /* ------------------------------- tools ------------------------------- */
 
   server.registerTool(
-    "discover.from_url",
+    "discover_from_url",
     {
       title: "Discover OniPin pin from a website URL",
       description:
@@ -134,7 +134,7 @@ export function createOniPinMcpServer() {
     async ({ url }) => {
       const data = await api(`/v1/discover?url=${encodeURIComponent(url)}`);
       return toolResult({
-        tool: "discover.from_url",
+        tool: "discover_from_url",
         data,
         summary: data.pin ? `Resolved pin ${data.pin}` : "Discovery response",
         pin: data.pin || undefined,
@@ -144,7 +144,7 @@ export function createOniPinMcpServer() {
   );
 
   server.registerTool(
-    "protocol.handshake",
+    "protocol_handshake",
     {
       title: "Handshake with an OniPin business",
       description:
@@ -169,7 +169,7 @@ export function createOniPinMcpServer() {
         }),
       });
       return toolResult({
-        tool: "protocol.handshake",
+        tool: "protocol_handshake",
         data,
         summary: `Handshake ${data.handshake || "done"} for ${pin}`,
         pin,
@@ -179,7 +179,7 @@ export function createOniPinMcpServer() {
   );
 
   server.registerTool(
-    "business.lookup",
+    "business_lookup",
     {
       title: "Look up an OniPin business",
       description:
@@ -191,7 +191,7 @@ export function createOniPinMcpServer() {
     async ({ pin }) => {
       const data = await api(`/v1/ping/${encodeURIComponent(pin)}`);
       return toolResult({
-        tool: "business.lookup",
+        tool: "business_lookup",
         data,
         summary: `Business ${data.name || pin} (${data.botName || "bot"})`,
         pin,
@@ -201,11 +201,11 @@ export function createOniPinMcpServer() {
   );
 
   server.registerTool(
-    "chat.send",
+    "chat_send",
     {
       title: "Send a chat message to a business",
       description:
-        "Send a chat message to the business. Returns conversationId — pass it on later turns. If the owner took over (human mode), reply may be null: use chat.read.",
+        "Send a chat message to the business. Returns conversationId — pass it on later turns. If the owner took over (human mode), reply may be null: use chat_read.",
       inputSchema: {
         pin: pinSchema,
         mensaje: z.string().min(1).max(4000).describe("Message text to send"),
@@ -236,11 +236,11 @@ export function createOniPinMcpServer() {
       });
       const replyText = data.reply?.text || data.reply || null;
       return toolResult({
-        tool: "chat.send",
+        tool: "chat_send",
         data,
         summary: replyText
           ? `Reply received (${String(replyText).slice(0, 80)}…)`
-          : "Message sent; waiting for reply (try chat.read)",
+          : "Message sent; waiting for reply (try chat_read)",
         pin,
         conversationId: data.conversationId || conversationId,
         businessName: data.data?.business?.name || undefined,
@@ -249,14 +249,14 @@ export function createOniPinMcpServer() {
   );
 
   server.registerTool(
-    "chat.read",
+    "chat_read",
     {
       title: "Read conversation messages",
       description:
         "Read messages in an existing conversation (bot and human owner). Use after (ISO timestamp) for only new messages.",
       inputSchema: {
         pin: pinSchema,
-        conversationId: z.string().min(8).describe("Conversation id from chat.send"),
+        conversationId: z.string().min(8).describe("Conversation id from chat_send"),
         after: z.string().optional().describe("Only messages after this ISO timestamp"),
       },
       outputSchema: toolOutputSchema,
@@ -269,7 +269,7 @@ export function createOniPinMcpServer() {
       );
       const messages = data.messages || data.items || [];
       return toolResult({
-        tool: "chat.read",
+        tool: "chat_read",
         data,
         summary: `${Array.isArray(messages) ? messages.length : 0} message(s)`,
         pin,
@@ -280,11 +280,11 @@ export function createOniPinMcpServer() {
   );
 
   server.registerTool(
-    "catalog.list",
+    "catalog_list",
     {
       title: "Get product catalog",
       description:
-        "List active products and services: name, description, price, kind and image. Call before order.create.",
+        "List active products and services: name, description, price, kind and image. Call before order_create.",
       inputSchema: { pin: pinSchema },
       outputSchema: toolOutputSchema,
       annotations: { ...READ_EXTERNAL, title: "Get product catalog" },
@@ -293,7 +293,7 @@ export function createOniPinMcpServer() {
       const data = await api(`/v1/catalog/${encodeURIComponent(pin)}`);
       const items = data.items || data.products || [];
       return toolResult({
-        tool: "catalog.list",
+        tool: "catalog_list",
         data,
         summary: `${Array.isArray(items) ? items.length : 0} catalog item(s)`,
         pin,
@@ -304,7 +304,7 @@ export function createOniPinMcpServer() {
   );
 
   server.registerTool(
-    "booking.create",
+    "booking_create",
     {
       title: "Request a booking",
       description:
@@ -362,7 +362,7 @@ export function createOniPinMcpServer() {
           "La solicitud quedó pendiente de aprobación. El cliente y el negocio verán el aviso en el chat.",
       };
       return toolResult({
-        tool: "booking.create",
+        tool: "booking_create",
         data,
         summary: `Booking requested: ${servicio} @ ${fecha}`,
         pin,
@@ -373,11 +373,11 @@ export function createOniPinMcpServer() {
   );
 
   server.registerTool(
-    "order.create",
+    "order_create",
     {
       title: "Request a product purchase",
       description:
-        "Create a pending order request (no card processing). Phone or email required unless client has a pin. Call catalog.list first.",
+        "Create a pending order request (no card processing). Phone or email required unless client has a pin. Call catalog_list first.",
       inputSchema: {
         pin: pinSchema,
         producto: z.string().min(1).max(200).describe("Product name or id from catalog"),
@@ -431,7 +431,7 @@ export function createOniPinMcpServer() {
           "El pedido quedó pendiente de aprobación. El cliente y el negocio verán el aviso en el chat.",
       };
       return toolResult({
-        tool: "order.create",
+        tool: "order_create",
         data,
         summary: `Order requested: ${producto} x${cantidad}`,
         pin,
@@ -501,10 +501,10 @@ export function createOniPinMcpServer() {
           content: {
             type: "text",
             text: `Actúa como mi representante ante el negocio OniPin con pin ${pin}. Objetivo: ${objetivo}.
-1. Usa business.lookup para conocer el negocio y catalog.list si aplica.
-2. Conversa con chat.send, guardando el conversationId para mantener el hilo.
-3. Si hay que reservar usa booking.create; si hay que comprar usa order.create.
-4. Verifica respuestas del dueño con chat.read antes de darme conclusiones.
+1. Usa business_lookup para conocer el negocio y catalog_list si aplica.
+2. Conversa con chat_send, guardando el conversationId para mantener el hilo.
+3. Si hay que reservar usa booking_create; si hay que comprar usa order_create.
+4. Verifica respuestas del dueño con chat_read antes de darme conclusiones.
 Resume al final qué se logró y qué queda pendiente.`,
           },
         },

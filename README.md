@@ -1,52 +1,115 @@
-# OniPin MCP (Desktop Extension)
+# OniPin Desktop Extension (MCPB)
 
-Thin **local MCP client** for [Claude Desktop](https://claude.ai/download). Talk to businesses that publish an OniPin pin (`onp_…`).
+**OniPin Desktop Extension enables Claude to connect with businesses through the OniPin protocol. Discover businesses using an `onp_` PIN, browse catalogs, chat with AI or human agents, request appointments, and create purchase requests through the public OniPin API.**
 
-This repository contains **only** the Desktop Extension / MCPB wrapper. It calls the **public** OniPin HTTP API (`https://onnivers.store` by default). It does **not** include the OniPin platform application, database, or private server source.
+This repository is a **thin local MCP / MCPB client** for [Claude Desktop](https://claude.ai/download). It talks only to the **public** OniPin HTTP API (default [`https://onnivers.store`](https://onnivers.store)). It does **not** include the OniPin platform application, database, or private server source.
 
-## What it does
+| File | Purpose |
+|------|---------|
+| [`LICENSE`](./LICENSE) | MIT (this repository only) |
+| [`manifest.json`](./manifest.json) | Claude Desktop Extension metadata |
+| [`package.json`](./package.json) | Node.js package & dependencies |
+| [`server/`](./server/) | Stdio MCP entry point (public API client) |
+| [Releases](https://github.com/deivys1224-ctrl/onipin-mcp/releases) | Prebuilt `onipin.mcpb` |
+
+---
+
+## What the extension does
+
+OniPin businesses publish a unique pin (`onp_…`). With this extension, Claude can:
+
+1. **Discover** a business by pin or from a website URL  
+2. **Browse** its product / service catalog  
+3. **Chat** with the business AI (and read human replies when the owner takes over)  
+4. **Request appointments** (pending business approval)  
+5. **Create purchase requests** (no card processing inside the MCP — the business coordinates payment in chat)
 
 | Tool | Purpose |
 |------|---------|
-| `buscar_negocio` | Look up a business by pin |
-| `obtener_catalogo` | Product / service catalog |
-| `enviar_mensaje` | Chat with the business AI |
-| `leer_conversacion` | Read thread messages |
-| `crear_reserva` | Request a booking |
-| `comprar_producto` | Request an order (no payment processing) |
-| `descubrir_url` | Resolve pin from a website URL |
-| `handshake` | Optional protocol handshake |
+| `buscar_negocio` | Look up a business by `onp_` pin |
+| `obtener_catalogo` | List products and services |
+| `enviar_mensaje` | Send a chat message (keep `conversationId` for follow-ups) |
+| `leer_conversacion` | Read messages in a conversation |
+| `crear_reserva` | Request a booking / appointment |
+| `comprar_producto` | Request a product order |
+| `descubrir_url` | Resolve a pin from a website URL |
+| `handshake` | Optional OniPin protocol handshake |
 
-## Install (Claude Desktop)
+---
 
-1. Download `onipin.mcpb` from [Releases](https://github.com/deivys1224-ctrl/onipin-mcp/releases) (or build below).
-2. Double-click the `.mcpb` file, or: **Settings → Extensions → Install Extension…**
-3. Optional: set API base URL (default `https://onnivers.store`).
+## Installation (Claude Desktop)
 
-## Example prompts
+1. Download **`onipin.mcpb`** from the latest [Release](https://github.com/deivys1224-ctrl/onipin-mcp/releases).  
+2. Install one of:
+   - Double-click `onipin.mcpb`, or  
+   - Drag and drop into Claude Desktop, or  
+   - **Settings → Extensions → Advanced → Install Extension…** and select the file.  
+3. Confirm installation. Claude Desktop bundles Node.js — no extra runtime is required.
 
-- “Look up pin `onp_vuzadcjv3xw7` and tell me what they sell.”
-- “Get the catalog for that pin and ask about OnniVers Educación.”
-- “Start a chat and request a cash purchase for product X.”
-
-## Privacy
-
-Conversations go through the public OniPin API and appear in the business CHATS inbox as an AI agent visit. Privacy policy: https://onnivers.com/privacidad
-
-## Build `.mcpb` locally
+### Build from source (optional)
 
 ```bash
+git clone https://github.com/deivys1224-ctrl/onipin-mcp.git
+cd onipin-mcp
 npm install --omit=dev
 npx @anthropic-ai/mcpb pack .
 ```
 
+Then install the generated `.mcpb` as above.
+
+---
+
+## Configuration
+
+### Business pin (`onp_…`)
+
+You do **not** configure a pin inside extension settings. Pass the business pin in the conversation, for example:
+
+- “Look up pin `onp_vuzadcjv3xw7` and tell me what they sell.”  
+- “Get the catalog for `onp_…` and ask about product X.”
+
+Pins look like: `onp_` + 8–32 lowercase letters/digits (e.g. `onp_vuzadcjv3xw7`).
+
+### API base URL (optional)
+
+In the extension settings you can set **OniPin API base URL**.
+
+| Setting | Default | When to change |
+|---------|---------|----------------|
+| `base_url` | `https://onnivers.store` | Only if you point at a custom OniPin deployment |
+
+### Token / authentication
+
+**No API token is required** for normal use. This client calls the **public** OniPin API (`/v1`). There is no OAuth or secret to paste for Claude Desktop.
+
+If you self-host and later enable a private MCP token on the server, that is outside this Desktop Extension’s default setup.
+
+---
+
+## Example prompts
+
+- “Look up pin `onp_vuzadcjv3xw7` and summarize what the business offers.”  
+- “Get the catalog for that pin and ask about OnniVers Educación.”  
+- “Start a chat, request a purchase, and complete payment as cash or with a written payment reference.”  
+
+---
+
+## Privacy & terms
+
+- Traffic goes to the public OniPin API; chats appear in the business **CHATS** inbox as an AI-agent visit.  
+- Privacy policy: https://onnivers.com/privacidad  
+- Terms: https://onnivers.com/terminos  
+- Product docs: https://onnivers.store/docs  
+
+---
+
 ## License
 
-MIT — see [LICENSE](./LICENSE). Applies to **this** repository only.
+[MIT](./LICENSE) — applies to **this** public repository only (Desktop Extension / MCP client). The commercial OniPin platform is separate and not published here.
 
 ## Links
 
 - Product: https://onnivers.store  
 - Docs: https://onnivers.store/docs  
-- Remote MCP (HTTP): `https://onnivers.store/mcp`  
+- Remote MCP (HTTP, not this package): `https://onnivers.store/mcp`  
 - Issues: https://github.com/deivys1224-ctrl/onipin-mcp/issues  

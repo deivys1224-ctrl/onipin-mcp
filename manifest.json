@@ -3,8 +3,8 @@
   "name": "onipin",
   "display_name": "OniPin",
   "version": "1.0.0",
-  "description": "Talk to OniPin businesses (onp_ pins): catalog, chat, bookings and order requests via the public OniPin API.",
-  "long_description": "OniPin connects Claude to businesses that publish an onp_ pin. Look up a business, browse its catalog, chat with its AI, request bookings, or create order requests. This Desktop Extension is a thin local MCP client; all data and processing happen on the public OniPin API (default https://onnivers.store). It does not include the OniPin platform source code.",
+  "description": "OniPin Desktop Extension enables Claude to connect with businesses through the OniPin protocol. Discover businesses using an onp_ PIN, browse catalogs, chat with AI or human agents, request appointments, and create purchase requests through the public OniPin API.",
+  "long_description": "OniPin Desktop Extension enables Claude to connect with businesses through the OniPin protocol. Discover businesses using an onp_ PIN, browse catalogs, chat with AI or human agents, request appointments, and create purchase requests through the public OniPin API (default https://onnivers.store). This is a thin local MCP client only — it does not include the OniPin platform source code. No API token is required; pass the business pin (onp_…) in the conversation.",
   "author": {
     "name": "deivys1224-ctrl",
     "email": "deivys1224@gmail.com",
@@ -83,7 +83,7 @@
     "base_url": {
       "type": "string",
       "title": "OniPin API base URL",
-      "description": "Public OniPin API origin. Leave default unless you use a custom deployment.",
+      "description": "Public OniPin API origin (default https://onnivers.store). No API token required. Pass the business onp_ PIN in the chat with Claude, not in this setting.",
       "default": "https://onnivers.store",
       "required": false
     }

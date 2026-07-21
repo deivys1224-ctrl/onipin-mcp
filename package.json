@@ -2,7 +2,7 @@
   "name": "onipin-mcp",
   "version": "1.0.0",
   "private": true,
-  "description": "OniPin Desktop MCP — talk to OniPin businesses (onp_ pins) from Claude Desktop via the public API.",
+  "description": "OniPin Desktop Extension enables Claude to connect with businesses through the OniPin protocol via the public OniPin API.",
   "type": "module",
   "license": "MIT",
   "engines": {

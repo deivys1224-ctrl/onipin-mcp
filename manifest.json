@@ -1,0 +1,91 @@
+{
+  "manifest_version": "0.2",
+  "name": "onipin",
+  "display_name": "OniPin",
+  "version": "1.0.0",
+  "description": "Talk to OniPin businesses (onp_ pins): catalog, chat, bookings and order requests via the public OniPin API.",
+  "long_description": "OniPin connects Claude to businesses that publish an onp_ pin. Look up a business, browse its catalog, chat with its AI, request bookings, or create order requests. This Desktop Extension is a thin local MCP client; all data and processing happen on the public OniPin API (default https://onnivers.store). It does not include the OniPin platform source code.",
+  "author": {
+    "name": "deivys1224-ctrl",
+    "email": "deivys1224@gmail.com",
+    "url": "https://github.com/deivys1224-ctrl"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/deivys1224-ctrl/onipin-mcp.git"
+  },
+  "homepage": "https://onnivers.store",
+  "documentation": "https://onnivers.store/docs",
+  "support": "https://github.com/deivys1224-ctrl/onipin-mcp/issues",
+  "privacy_policies": ["https://onnivers.com/privacidad"],
+  "license": "MIT",
+  "keywords": ["onipin", "chat", "commerce", "bookings", "mcp"],
+  "compatibility": {
+    "claude_desktop": ">=0.1.0",
+    "platforms": ["darwin", "win32"],
+    "runtimes": {
+      "node": ">=20.0.0"
+    }
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.mjs",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/server/index.mjs"],
+      "env": {
+        "ONIPIN_BASE_URL": "${user_config.base_url}"
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "descubrir_url",
+      "description": "Resolve an OniPin pin from a website URL"
+    },
+    {
+      "name": "handshake",
+      "description": "Optional handshake before chat"
+    },
+    {
+      "name": "buscar_negocio",
+      "description": "Look up a business by pin"
+    },
+    {
+      "name": "enviar_mensaje",
+      "description": "Send a chat message"
+    },
+    {
+      "name": "leer_conversacion",
+      "description": "Read conversation messages"
+    },
+    {
+      "name": "obtener_catalogo",
+      "description": "Get product catalog"
+    },
+    {
+      "name": "crear_reserva",
+      "description": "Request a booking"
+    },
+    {
+      "name": "comprar_producto",
+      "description": "Request a product purchase"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "atender_como_cliente",
+      "description": "Act as the customer's agent toward a business",
+      "text": "Act as my representative with OniPin business pin {{pin}}. Goal: {{objetivo}}. Use buscar_negocio, obtener_catalogo, enviar_mensaje, crear_reserva or comprar_producto as needed, and leer_conversacion before concluding."
+    }
+  ],
+  "user_config": {
+    "base_url": {
+      "type": "string",
+      "title": "OniPin API base URL",
+      "description": "Public OniPin API origin. Leave default unless you use a custom deployment.",
+      "default": "https://onnivers.store",
+      "required": false
+    }
+  }
+}

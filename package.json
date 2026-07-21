@@ -1,0 +1,37 @@
+{
+  "name": "onipin-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OniPin Desktop MCP — talk to OniPin businesses (onp_ pins) from Claude Desktop via the public API.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "onipin-mcp": "./server/index.mjs"
+  },
+  "scripts": {
+    "start": "node server/index.mjs",
+    "pack:mcpb": "npx --yes @anthropic-ai/mcpb pack ."
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.25.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/deivys1224-ctrl/onipin-mcp.git"
+  },
+  "homepage": "https://onnivers.store",
+  "bugs": {
+    "url": "https://github.com/deivys1224-ctrl/onipin-mcp/issues"
+  },
+  "keywords": [
+    "mcp",
+    "mcpb",
+    "onipin",
+    "claude",
+    "desktop-extension"
+  ]
+}

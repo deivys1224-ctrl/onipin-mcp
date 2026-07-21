@@ -1,0 +1,8 @@
+# Generated Desktop Extension — download from GitHub Releases instead of cloning node_modules.
+*.mcpb
+node_modules/
+.DS_Store
+Thumbs.db
+.env
+.env.*
+*.log

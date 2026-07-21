@@ -20,6 +20,7 @@
   <circle cx="380" cy="160" r="2" fill="#a5f3fc" opacity="0.8"/>
   <circle cx="420" cy="320" r="2.5" fill="#fff" opacity="0.7"/>
   <circle cx="100" cy="360" r="2" fill="#cffafe" opacity="0.75"/>
+  <!-- map pin -->
   <path fill="url(#pin)" d="M256 72c-62 0-112 48-112 110 0 82 96 210 104 222a10 10 0 0 0 16 0c8-12 104-140 104-222 0-62-50-110-112-110zm0 158a48 48 0 1 1 0-96 48 48 0 0 1 0 96z"/>
   <circle cx="256" cy="182" r="22" fill="#0a1628"/>
   <circle cx="256" cy="182" r="10" fill="#67e8f9"/>

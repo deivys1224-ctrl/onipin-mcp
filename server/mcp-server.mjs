@@ -90,13 +90,29 @@ Typical flow:
 5) chat.read to poll owner replies when mode is human
 Use domain.action tool names (business.lookup, chat.send, …).`;
 
+/** Compact OniPin mark (same as /icon.svg) for MCP clients that read serverInfo.icons */
+const ICON_DATA_URI =
+  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9Ik9uaVBpbiI+IDxkZWZzPiA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+IDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMwYTE2MjgiLz4gPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDYxMDE4Ii8+IDwvbGluZWFyR3JhZGllbnQ+IDxyYWRpYWxHcmFkaWVudCBpZD0ibmVidWxhIiBjeD0iMzUlIiBjeT0iMzAlIiByPSI3MCUiPiA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMjJkM2VlIiBzdG9wLW9wYWNpdHk9IjAuNTUiLz4gPHN0b3Agb2Zmc2V0PSI0NSUiIHN0b3AtY29sb3I9IiM2MzY2ZjEiIHN0b3Atb3BhY2l0eT0iMC4zNSIvPiA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwYTE2MjgiIHN0b3Atb3BhY2l0eT0iMCIvPiA8L3JhZGlhbEdyYWRpZW50PiA8bGluZWFyR3JhZGllbnQgaWQ9InBpbiIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPiA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNjdlOGY5Ii8+IDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzA2YjZkNCIvPiA8L2xpbmVhckdyYWRpZW50PiA8L2RlZnM+IDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iOTYiIGZpbGw9InVybCgjYmcpIi8+IDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iOTYiIGZpbGw9InVybCgjbmVidWxhKSIvPiA8Y2lyY2xlIGN4PSIxNDAiIGN5PSIxMjAiIHI9IjMiIGZpbGw9IiNlMGYyZmUiIG9wYWNpdHk9IjAuOSIvPiA8Y2lyY2xlIGN4PSIzODAiIGN5PSIxNjAiIHI9IjIiIGZpbGw9IiNhNWYzZmMiIG9wYWNpdHk9IjAuOCIvPiA8Y2lyY2xlIGN4PSI0MjAiIGN5PSIzMjAiIHI9IjIuNSIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC43Ii8+IDxjaXJjbGUgY3g9IjEwMCIgY3k9IjM2MCIgcj0iMiIgZmlsbD0iI2NmZmFmZSIgb3BhY2l0eT0iMC43NSIvPiA8cGF0aCBmaWxsPSJ1cmwoI3BpbikiIGQ9Ik0yNTYgNzJjLTYyIDAtMTEyIDQ4LTExMiAxMTAgMCA4MiA5NiAyMTAgMTA0IDIyMmExMCAxMCAwIDAgMCAxNiAwYzgtMTIgMTA0LTE0MCAxMDQtMjIyIDAtNjItNTAtMTEwLTExMi0xMTB6bTAgMTU4YTQ4IDQ4IDAgMSAxIDAtOTYgNDggNDggMCAwIDEgMCA5NnoiLz4gPGNpcmNsZSBjeD0iMjU2IiBjeT0iMTgyIiByPSIyMiIgZmlsbD0iIzBhMTYyOCIvPiA8Y2lyY2xlIGN4PSIyNTYiIGN5PSIxODIiIHI9IjEwIiBmaWxsPSIjNjdlOGY5Ii8+IDwvc3ZnPg==";
+
 export function createOniPinMcpServer() {
   const server = new McpServer(
     {
       name: "onipin",
-      version: "0.2.0",
+      version: "0.2.1",
       title: "OniPin",
       websiteUrl: "https://onnivers.store",
+      icons: [
+        {
+          src: ICON_DATA_URI,
+          mimeType: "image/svg+xml",
+          sizes: ["any"],
+        },
+        {
+          src: "https://onnivers.store/icon.svg",
+          mimeType: "image/svg+xml",
+          sizes: ["512x512"],
+        },
+      ],
     },
     { instructions: INSTRUCTIONS },
   );

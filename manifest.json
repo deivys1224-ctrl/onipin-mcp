@@ -2,7 +2,7 @@
   "manifest_version": "0.2",
   "name": "onipin",
   "display_name": "OniPin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "OniPin Desktop Extension enables Claude to connect with businesses through the OniPin protocol. Discover businesses using an onp_ PIN, browse catalogs, chat with AI or human agents, request appointments, and create purchase requests through the public OniPin API.",
   "long_description": "OniPin Desktop Extension enables Claude to connect with businesses through the OniPin protocol. Discover businesses using an onp_ PIN, browse catalogs, chat with AI or human agents, request appointments, and create purchase requests through the public OniPin API (default https://onnivers.store). This is a thin local MCP client only — it does not include the OniPin platform source code. No API token is required; pass the business pin (onp_…) in the conversation.",
   "author": {
@@ -40,35 +40,35 @@
   },
   "tools": [
     {
-      "name": "descubrir_url",
+      "name": "discover.from_url",
       "description": "Resolve an OniPin pin from a website URL"
     },
     {
-      "name": "handshake",
+      "name": "protocol.handshake",
       "description": "Optional handshake before chat"
     },
     {
-      "name": "buscar_negocio",
+      "name": "business.lookup",
       "description": "Look up a business by pin"
     },
     {
-      "name": "enviar_mensaje",
+      "name": "chat.send",
       "description": "Send a chat message"
     },
     {
-      "name": "leer_conversacion",
+      "name": "chat.read",
       "description": "Read conversation messages"
     },
     {
-      "name": "obtener_catalogo",
+      "name": "catalog.list",
       "description": "Get product catalog"
     },
     {
-      "name": "crear_reserva",
+      "name": "booking.create",
       "description": "Request a booking"
     },
     {
-      "name": "comprar_producto",
+      "name": "order.create",
       "description": "Request a product purchase"
     }
   ],
@@ -76,7 +76,7 @@
     {
       "name": "atender_como_cliente",
       "description": "Act as the customer's agent toward a business",
-      "text": "Act as my representative with OniPin business pin {{pin}}. Goal: {{objetivo}}. Use buscar_negocio, obtener_catalogo, enviar_mensaje, crear_reserva or comprar_producto as needed, and leer_conversacion before concluding."
+      "text": "Act as my representative with OniPin business pin {{pin}}. Goal: {{objetivo}}. Use business.lookup, catalog.list, chat.send, booking.create or order.create as needed, and chat.read before concluding."
     }
   ],
   "user_config": {

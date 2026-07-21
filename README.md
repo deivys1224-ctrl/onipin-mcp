@@ -26,14 +26,14 @@ OniPin businesses publish a unique pin (`onp_…`). With this extension, Claude 
 
 | Tool | Purpose |
 |------|---------|
-| `buscar_negocio` | Look up a business by `onp_` pin |
-| `obtener_catalogo` | List products and services |
-| `enviar_mensaje` | Send a chat message (keep `conversationId` for follow-ups) |
-| `leer_conversacion` | Read messages in a conversation |
-| `crear_reserva` | Request a booking / appointment |
-| `comprar_producto` | Request a product order |
-| `descubrir_url` | Resolve a pin from a website URL |
-| `handshake` | Optional OniPin protocol handshake |
+| `business.lookup` | Look up a business by `onp_` pin |
+| `catalog.list` | List products and services |
+| `chat.send` | Send a chat message (keep `conversationId` for follow-ups) |
+| `chat.read` | Read messages in a conversation |
+| `booking.create` | Request a booking / appointment |
+| `order.create` | Request a product order |
+| `discover.from_url` | Resolve a pin from a website URL |
+| `protocol.handshake` | Optional OniPin protocol handshake |
 
 ---
 

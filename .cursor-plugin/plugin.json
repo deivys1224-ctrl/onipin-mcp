@@ -1,0 +1,15 @@
+{
+  "name": "onipin",
+  "version": "1.0.2",
+  "description": "Connect Cursor to OniPin businesses via MCP (https://onnivers.store/mcp).",
+  "author": {
+    "name": "deivys1224-ctrl",
+    "url": "https://github.com/deivys1224-ctrl"
+  },
+  "homepage": "https://onnivers.store",
+  "repository": "https://github.com/deivys1224-ctrl/onipin-mcp",
+  "license": "MIT",
+  "logo": "icon.svg",
+  "keywords": ["onipin", "mcp", "cursor"],
+  "mcpServers": "./.mcp.json"
+}

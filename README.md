@@ -103,6 +103,20 @@ If you self-host and later enable a private MCP token on the server, that is out
 
 ---
 
+## Cursor / Open Plugins
+
+This repo also follows the [Open Plugins](https://open-plugins.com) layout so it can be submitted to [cursor.directory](https://cursor.directory/plugins/new):
+
+| Path | Purpose |
+|------|---------|
+| [`.mcp.json`](./.mcp.json) | MCP server → `https://onnivers.store/mcp` |
+| [`.plugin/plugin.json`](./.plugin/plugin.json) | Vendor-neutral plugin manifest |
+| [`.cursor-plugin/plugin.json`](./.cursor-plugin/plugin.json) | Cursor-prefixed plugin manifest |
+
+Scan URL: `https://github.com/deivys1224-ctrl/onipin-mcp`
+
+---
+
 ## License
 
 [MIT](./LICENSE) — applies to **this** public repository only (Desktop Extension / MCP client). The commercial OniPin platform is separate and not published here.

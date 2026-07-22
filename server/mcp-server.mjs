@@ -99,11 +99,12 @@ async function resolveBusinessPin({ pin, username, url }) {
   return null;
 }
 
-async function searchBusinesses({ telefono, categoria, ciudad }) {
+async function searchBusinesses({ telefono, categoria, ciudad, nombre }) {
   const qs = new URLSearchParams();
   if (telefono) qs.set("telefono", telefono);
   if (categoria) qs.set("categoria", categoria);
   if (ciudad) qs.set("ciudad", ciudad);
+  if (nombre) qs.set("nombre", nombre);
   return api(`/v1/discover/search?${qs.toString()}`);
 }
 
@@ -123,7 +124,7 @@ const WRITE_EXTERNAL = {
 
 const INSTRUCTIONS = `OniPin MCP connects AI agents to businesses via public pins (onp_…).
 Typical flow:
-1) business_lookup (pin, @username, url, telefono, categoria, ciudad) or discover_from_url
+1) business_lookup (pin, @username, url, telefono, nombre, categoria, ciudad) or discover_from_url
 2) protocol_handshake (optional) with intent
 3) catalog_list before buying; chat_send to converse (keep conversationId)
 4) booking_create or order_create for requests (pending business approval)
@@ -223,7 +224,7 @@ export function createOniPinMcpServer() {
     {
       title: "Look up an OniPin business",
       description:
-        "Discovery by pin, @username, url, phone, category and/or city. Exact lookup (pin/username/url) returns one business; category/city/phone can return a list. Example: { categoria: \"barbería\", ciudad: \"Valledupar\" }.",
+        "Find an OniPin business by pin, @username, website url, phone, business name, category and/or city. Exact lookups (pin/username/url) return one business; name/phone/category/city may return a list. Examples: { nombre: \"Empresa Tecnológica\" }, { telefono: \"+573117486855\" }, { categoria: \"barbería\", ciudad: \"Valledupar\" }.",
       inputSchema: {
         pin: pinSchema.optional().describe("Business pin (onp_…). Highest priority if provided."),
         username: z
@@ -245,6 +246,12 @@ export function createOniPinMcpServer() {
           .describe(
             "Phone number to find the business (e.g. +573117486855 or 3117486855). Matches with or without country code.",
           ),
+        nombre: z
+          .string()
+          .min(2)
+          .max(120)
+          .optional()
+          .describe("Business or trade name (fuzzy), e.g. Empresa Tecnológica, OnniVers"),
         categoria: z
           .string()
           .min(2)
@@ -261,7 +268,7 @@ export function createOniPinMcpServer() {
       outputSchema: toolOutputSchema,
       annotations: { ...READ_EXTERNAL, title: "Look up an OniPin business" },
     },
-    async ({ pin, username, url, telefono, categoria, ciudad }) => {
+    async ({ pin, username, url, telefono, nombre, categoria, ciudad }) => {
       const resolvedPin = await resolveBusinessPin({ pin, username, url });
       if (resolvedPin) {
         const data = await api(`/v1/ping/${encodeURIComponent(resolvedPin)}`);
@@ -274,8 +281,8 @@ export function createOniPinMcpServer() {
         });
       }
 
-      if (telefono || categoria || ciudad) {
-        const data = await searchBusinesses({ telefono, categoria, ciudad });
+      if (telefono || nombre || categoria || ciudad) {
+        const data = await searchBusinesses({ telefono, nombre, categoria, ciudad });
         if (!data.found || !data.count) {
           throw new Error("Ningún negocio coincide con esa búsqueda (404)");
         }
@@ -300,7 +307,7 @@ export function createOniPinMcpServer() {
         });
       }
 
-      throw new Error("Indica pin, username, url, telefono, categoria o ciudad");
+      throw new Error("Indica pin, username, url, telefono, nombre, categoria o ciudad");
     },
   );
 

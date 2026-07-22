@@ -103,17 +103,38 @@ If you self-host and later enable a private MCP token on the server, that is out
 
 ---
 
-## Cursor / Open Plugins
+## Cursor / Open Plugins / Marketplace
 
-This repo also follows the [Open Plugins](https://open-plugins.com) layout so it can be submitted to [cursor.directory](https://cursor.directory/plugins/new):
+This repo follows the [Cursor plugin](https://cursor.com/docs/plugins) + [Open Plugins](https://open-plugins.com) layout for:
+
+- [cursor.directory](https://cursor.directory) (community listing — already live as **onipin**)
+- [Cursor Marketplace](https://cursor.com/marketplace) (official Customize search — submitted for review)
 
 | Path | Purpose |
 |------|---------|
 | [`.mcp.json`](./.mcp.json) | MCP server → `https://onnivers.store/mcp` |
 | [`.plugin/plugin.json`](./.plugin/plugin.json) | Vendor-neutral plugin manifest |
-| [`.cursor-plugin/plugin.json`](./.cursor-plugin/plugin.json) | Cursor-prefixed plugin manifest |
+| [`.cursor-plugin/plugin.json`](./.cursor-plugin/plugin.json) | Cursor Marketplace / Directory manifest |
+| [`assets/logo.png`](./assets/logo.png) | Plugin logo (512×512) |
+| [`icon.svg`](./icon.svg) | Vector mark |
 
-Scan URL: `https://github.com/deivys1224-ctrl/onipin-mcp`
+**GitHub repo for review:** `https://github.com/deivys1224-ctrl/onipin-mcp`
+
+### Install in Cursor (HTTP MCP)
+
+Remote endpoint (no local Node required):
+
+```json
+{
+  "mcpServers": {
+    "onipin": {
+      "url": "https://onnivers.store/mcp"
+    }
+  }
+}
+```
+
+Or install from the plugin once it appears under **Customize → Marketplace** after Anysphere review.
 
 ---
 

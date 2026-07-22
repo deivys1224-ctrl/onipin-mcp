@@ -1,6 +1,7 @@
 {
   "name": "onipin",
-  "version": "1.0.2",
+  "displayName": "OniPin",
+  "version": "1.0.3",
   "description": "Connect Cursor and AI agents to OniPin businesses: discover by pin, @username, URL, category or city; chat, catalog, bookings and orders via the public OniPin API.",
   "author": {
     "name": "deivys1224-ctrl",
@@ -10,7 +11,15 @@
   "homepage": "https://onnivers.store",
   "repository": "https://github.com/deivys1224-ctrl/onipin-mcp",
   "license": "MIT",
-  "logo": "icon.svg",
-  "keywords": ["onipin", "mcp", "chat", "commerce", "bookings", "cursor"],
+  "logo": "assets/logo.png",
+  "keywords": [
+    "onipin",
+    "mcp",
+    "chat",
+    "commerce",
+    "bookings",
+    "cursor",
+    "discovery"
+  ],
   "mcpServers": "./.mcp.json"
 }

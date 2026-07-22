@@ -67,6 +67,46 @@ const pinSchema = z
   .regex(/^onp_[a-z0-9]{8,32}$/, "Pin OniPin con formato onp_xxxxxxxx")
   .describe("Pin único del negocio (ej. onp_vuzadcjv3xw7)");
 
+/**
+ * Resolve a business pin from pin | username | url (priority in that order).
+ * Throws a clear Error on missing input or 404.
+ */
+async function resolveBusinessPin({ pin, username, url }) {
+  if (pin) return pin;
+
+  if (username) {
+    const handle = String(username).trim().toLowerCase().replace(/^@+/, "");
+    if (!handle) throw new Error("username vacío");
+    const data = await api(`/v1/discover?username=${encodeURIComponent(handle)}`);
+    if (!data.found || !data.pin) {
+      throw new Error(`Negocio no encontrado para @${handle}`);
+    }
+    return data.pin;
+  }
+
+  if (url) {
+    const data = await api(`/v1/discover?url=${encodeURIComponent(url)}`);
+    if (!data.found || !data.pin) {
+      throw new Error(
+        data.error === "pin_not_registered"
+          ? `Pin descubierto en la URL pero no registrado (${data.pin || "?"})`
+          : "Negocio no encontrado en esa URL (404)",
+      );
+    }
+    return data.pin;
+  }
+
+  return null;
+}
+
+async function searchBusinesses({ telefono, categoria, ciudad }) {
+  const qs = new URLSearchParams();
+  if (telefono) qs.set("telefono", telefono);
+  if (categoria) qs.set("categoria", categoria);
+  if (ciudad) qs.set("ciudad", ciudad);
+  return api(`/v1/discover/search?${qs.toString()}`);
+}
+
 const READ_EXTERNAL = {
   readOnlyHint: true,
   destructiveHint: false,
@@ -83,7 +123,7 @@ const WRITE_EXTERNAL = {
 
 const INSTRUCTIONS = `OniPin MCP connects AI agents to businesses via public pins (onp_…).
 Typical flow:
-1) discover_from_url or business_lookup to identify the business
+1) business_lookup (pin, @username, url, telefono, categoria, ciudad) or discover_from_url
 2) protocol_handshake (optional) with intent
 3) catalog_list before buying; chat_send to converse (keep conversationId)
 4) booking_create or order_create for requests (pending business approval)
@@ -98,7 +138,7 @@ export function createOniPinMcpServer() {
   const server = new McpServer(
     {
       name: "onipin",
-      version: "0.2.2",
+      version: "0.2.4",
       title: "OniPin",
       websiteUrl: "https://onnivers.store",
       icons: [
@@ -183,20 +223,82 @@ export function createOniPinMcpServer() {
     {
       title: "Look up an OniPin business",
       description:
-        "Discovery for a pin: business name, description, language, capabilities and endpoints. Call before chatting to know who you are talking to.",
-      inputSchema: { pin: pinSchema },
+        "Discovery by pin, @username, url, phone, category and/or city. Exact lookup (pin/username/url) returns one business; category/city/phone can return a list. Example: { categoria: \"barbería\", ciudad: \"Valledupar\" }.",
+      inputSchema: {
+        pin: pinSchema.optional().describe("Business pin (onp_…). Highest priority if provided."),
+        username: z
+          .string()
+          .min(1)
+          .max(32)
+          .optional()
+          .describe("Public @username without requiring the @ (case-insensitive)"),
+        url: z
+          .string()
+          .url()
+          .optional()
+          .describe("Business website URL — resolves via well-known / meta / llms.txt"),
+        telefono: z
+          .string()
+          .min(5)
+          .max(40)
+          .optional()
+          .describe("Business or account phone number"),
+        categoria: z
+          .string()
+          .min(2)
+          .max(80)
+          .optional()
+          .describe("Category or free-text topic (e.g. barbería, technology, restaurante)"),
+        ciudad: z
+          .string()
+          .min(2)
+          .max(80)
+          .optional()
+          .describe("City filter (e.g. Valledupar, Bogotá)"),
+      },
       outputSchema: toolOutputSchema,
       annotations: { ...READ_EXTERNAL, title: "Look up an OniPin business" },
     },
-    async ({ pin }) => {
-      const data = await api(`/v1/ping/${encodeURIComponent(pin)}`);
-      return toolResult({
-        tool: "business_lookup",
-        data,
-        summary: `Business ${data.name || pin} (${data.botName || "bot"})`,
-        pin,
-        businessName: data.name || undefined,
-      });
+    async ({ pin, username, url, telefono, categoria, ciudad }) => {
+      const resolvedPin = await resolveBusinessPin({ pin, username, url });
+      if (resolvedPin) {
+        const data = await api(`/v1/ping/${encodeURIComponent(resolvedPin)}`);
+        return toolResult({
+          tool: "business_lookup",
+          data,
+          summary: `Business ${data.name || resolvedPin} (${data.botName || "bot"})`,
+          pin: resolvedPin,
+          businessName: data.name || undefined,
+        });
+      }
+
+      if (telefono || categoria || ciudad) {
+        const data = await searchBusinesses({ telefono, categoria, ciudad });
+        if (!data.found || !data.count) {
+          throw new Error("Ningún negocio coincide con esa búsqueda (404)");
+        }
+        if (data.count === 1 && data.items?.[0]?.pin) {
+          const full = await api(`/v1/ping/${encodeURIComponent(data.items[0].pin)}`);
+          return toolResult({
+            tool: "business_lookup",
+            data: { ...full, search: data },
+            summary: `Business ${full.name || data.items[0].pin} (${full.botName || "bot"})`,
+            pin: data.items[0].pin,
+            businessName: full.name || data.items[0].name || undefined,
+            itemCount: 1,
+          });
+        }
+        return toolResult({
+          tool: "business_lookup",
+          data,
+          summary: `${data.count} negocios encontrados`,
+          itemCount: data.count,
+          businessName: data.items?.[0]?.name || undefined,
+          pin: data.items?.[0]?.pin || undefined,
+        });
+      }
+
+      throw new Error("Indica pin, username, url, telefono, categoria o ciudad");
     },
   );
 

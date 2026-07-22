@@ -242,7 +242,9 @@ export function createOniPinMcpServer() {
           .min(5)
           .max(40)
           .optional()
-          .describe("Business or account phone number"),
+          .describe(
+            "Phone number to find the business (e.g. +573117486855 or 3117486855). Matches with or without country code.",
+          ),
         categoria: z
           .string()
           .min(2)
